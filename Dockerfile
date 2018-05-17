@@ -4,51 +4,24 @@
 # https://github.com/
 #
 
-# Pull base image.
-FROM ubuntu:14.04
+FROM ubuntu
 
-# Install.
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y nginx && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  add-apt-repository -y ppa:ondrej/php && \
-  apt-get update && \
-  apt-get install zip unzip && \
-  apt-get install php7.2 && \
-  apt-get install php7.2-fpm php7.2-mbstring php7.2-xml php7.2-mysql php7.2-zip php7.2-gd php7.2-curl php7.2-redis && \
-  apt-get install redis-tools && \
+MAINTAINER Moobi Developers
 
-# Limpando o cache das instalações é sempre recomendável remover do container tudo aquilo que não for mais
-# necessário após tudo configurado assim o container fica menor
-  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository ppa:ondrej/php && apt-get update && apt-get install -y nginx && apt-get install -y vim && apt-get install net-tools && apt-get install -y curl && apt-get install -y zip unzip && apt-get install -y php7.1 php7.1-gd php7.1-xml php7.1-json php7.1-opcache php7.1-curl php7.1-redis php7.1-mysql php7.1-mbstring php7.1-mcrypt php7.1-zip php7.1-fpm && apt-get clean
 
-# Instalando composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
-# Configurando o Nginx
-# Aqui copiamos nosso arquivo de configuração para dentro do container
-# Note que ainda não criamos esse arquivo, criaremos mais à frente
+LABEL Description = 'Moobi System'
+
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Arquivo de configuração do supervisor
-# Idem ao Nginx, será criado mais adiante
-COPY supervisord.conf /etc/supervisord.conf
-
-# Criando o diretório onde ficará nossa aplicação
-RUN mkdir -p /app
+VOLUME /app
 
 # Definindo o diretório app como nosso diretório de trabalho
 WORKDIR /app
 
-# Dando permissões para a pasta do projeto
-RUN chmod -R 755 /app
+# Create these folders and change its permissions:
+RUN mkdir /var/nginx/ && mkdir /var/nginx/client_body_temp && mkdir /var/nginx/proxy_temp && chown -R www-data:www-data /var/nginx/client_body_temp/ && chown -R www-data:www-data /var/nginx/proxy_temp/ && chmod -R 755 /app
 
-# Expondo as portas
-EXPOSE 80 443
-
-# Finalmente... Iniciando tudo... Ufa...
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+#EXPOSE 8080:8080
