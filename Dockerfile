@@ -16,12 +16,16 @@ LABEL Description = 'Moobi System'
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
+COPY admin-view.conf /etc/nginx/sites-available
+
+RUN ln -s /etc/nginx/sites-available/admin-view.conf /etc/nginx/sites-enabled && rm /etc/nginx/sites-available/default && rm /etc/nginx/sites-enabled/default
+
 VOLUME /app
 
 # Definindo o diretório app como nosso diretório de trabalho
 WORKDIR /app
 
 # Create these folders and change its permissions:
-RUN mkdir /var/nginx/ && mkdir /var/nginx/client_body_temp && mkdir /var/nginx/proxy_temp && chown -R www-data:www-data /var/nginx/client_body_temp/ && chown -R www-data:www-data /var/nginx/proxy_temp/ && chmod -R 755 /app
+RUN mkdir /var/nginx/ && mkdir /var/nginx/client_body_temp && mkdir /var/nginx/proxy_temp && chown -R www-data:www-data /var/nginx/client_body_temp/ && chown -R www-data:www-data /var/nginx/proxy_temp/ && chmod -R 755 /app && systemctl restart nginx.service
 
 #EXPOSE 8080:8080
