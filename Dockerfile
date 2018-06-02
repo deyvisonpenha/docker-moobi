@@ -33,3 +33,5 @@ WORKDIR /data/www/user-view
 
 # Create these folders and change its permissions:
 RUN mkdir /var/nginx/ && mkdir /var/nginx/client_body_temp && mkdir /var/nginx/proxy_temp && chown -R www-data:www-data /var/nginx/client_body_temp/ && chown -R www-data:www-data /var/nginx/proxy_temp/ && chmod -R 755 /data/www/user-view
+
+CMD ["nginx", "-g", "daemon off;"]
