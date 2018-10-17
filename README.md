@@ -30,7 +30,7 @@ docker build -t moobi_imagem:1.0 .  = constrói a imagem através de um Dockerfi
 
 docker rm $(docker ps -a -q) = remove todos os containers local
 
-docker rmi $(docker images -a) = remove todas as imagens
+docker rmi $(docker images -qa) = remove todas as imagens
 
 docker network create --subnet 172.18.0.0/16 rede_teste
 
